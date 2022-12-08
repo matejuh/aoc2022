@@ -8,7 +8,7 @@ fun main() {
 fun d1a() {
     var max = 0
     var n = 0
-    val file = File("/Users/matejplch/Programming/aoc2022/src/main/resources/D1")
+    val file = File(ClassLoader.getSystemResource("D1").path)
     file.forEachLine {
         if (it.isNotBlank()) {
             n += it.toInt()
@@ -25,7 +25,7 @@ fun d1a() {
 
 fun d1b() {
     val priorityQueue = PriorityQueue<Int>(4) { a, b -> if (a > b) 1 else -1 }
-    val file = File("/Users/matejplch/Programming/aoc2022/src/main/resources/D1")
+    val file = File(ClassLoader.getSystemResource("D1").path)
     var n = 0
     file.forEachLine {
         if (it.isNotBlank()) {

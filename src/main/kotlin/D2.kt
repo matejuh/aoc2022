@@ -5,7 +5,7 @@ fun main() {
 }
 
 fun d2A() {
-    val file = File("/Users/matejplch/Programming/aoc2022/src/main/resources/D2")
+    val file = File(ClassLoader.getSystemResource("D2").path)
     var finalScore = 0
     file.forEachLine {
         if(it.isNotBlank()) {
@@ -27,7 +27,7 @@ fun d2A() {
 }
 
 fun d2b() {
-    val file = File("/Users/matejplch/Programming/aoc2022/src/main/resources/D2")
+    val file = File(ClassLoader.getSystemResource("D2").path)
     var finalScore = 0
     file.forEachLine {
         if(it.isNotBlank()) {

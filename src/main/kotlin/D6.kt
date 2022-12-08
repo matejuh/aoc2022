@@ -15,7 +15,7 @@ private fun d6b() {
 private fun run(capacity: Int) {
     val arrayDeque = ArrayDeque<Char>(14)
     var i = 0
-    val reader = File("/Users/matejplch/Programming/aoc2022/src/main/resources/D6").reader()
+    val reader = File(ClassLoader.getSystemResource("D6").path).reader()
     loop@ do {
         val r = reader.read()
         i++

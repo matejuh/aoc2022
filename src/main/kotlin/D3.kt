@@ -5,7 +5,7 @@ fun main() {
 }
 
 fun d3a() {
-    val file = File("/Users/matejplch/Programming/aoc2022/src/main/resources/D3")
+    val file = File(ClassLoader.getSystemResource("D3").path)
     var sum = 0
     file.forEachLine {
         val arr = it.toCharArray()
@@ -27,7 +27,7 @@ fun d3a() {
 }
 
 fun d3b() {
-    val file = File("/Users/matejplch/Programming/aoc2022/src/main/resources/D3")
+    val file = File(ClassLoader.getSystemResource("D3").path)
     var lineNo = 0
     val group = Array(3) { CharArray(0) }
     var sum = 0

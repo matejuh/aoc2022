@@ -16,7 +16,7 @@ private fun d5b() {
 }
 
 private fun runVariant(variant: String) {
-    File("/Users/matejplch/Programming/aoc2022/src/main/resources/D5").useLines {
+    File(ClassLoader.getSystemResource("D5").path).useLines {
         val iterator = it.iterator()
         val initialConfig = mutableListOf<String>()
         initial@ while (iterator.hasNext()) {

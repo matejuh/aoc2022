@@ -7,7 +7,7 @@ fun main() {
 private fun d4a() {
     var sum = 0
     val regex = "(\\d+)-(\\d+),(\\d+)-(\\d+)".toRegex()
-    val file = File("/Users/matejplch/Programming/aoc2022/src/main/resources/D4")
+    val file = File(ClassLoader.getSystemResource("D4").path)
     file.forEachLine {
         // 2-6,4-8
         val result = regex.matchEntire(it)!!
@@ -26,7 +26,7 @@ private fun d4a() {
 private fun d4b() {
     var sum = 0
     val regex = "(\\d+)-(\\d+),(\\d+)-(\\d+)".toRegex()
-    val file = File("/Users/matejplch/Programming/aoc2022/src/main/resources/D4")
+    val file = File(ClassLoader.getSystemResource("D4").path)
     file.forEachLine {
         // 2-6,4-8
         val result = regex.matchEntire(it)!!

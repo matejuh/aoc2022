@@ -25,7 +25,7 @@ private fun d7b() {
 }
 
 private fun initializeFileSystem() {
-    java.io.File("/Users/matejplch/Programming/aoc2022/src/main/resources/D7").useLines {
+    java.io.File(ClassLoader.getSystemResource("D7").path).useLines {
         val iterator = it.iterator()
         var command = processCommand(iterator.next())
         while (iterator.hasNext()) {
@@ -62,14 +62,14 @@ private class ListDirectory() : Command {
     override fun run() {}
 
     override fun processOutput(line: String) {
-        val o = line.split(" ")
+        val (typeOrSize, name) = line.split(" ")
 //        dir a
 //        14848514 b.txt
         val currentNode = fileSystem.currentNode
-        val child = if (o[0] == "dir") {
-            Directory(o[1], currentNode)
+        val child = if (typeOrSize == "dir") {
+            Directory(name, currentNode)
         } else {
-            File(o[1], currentNode, o[0].toInt())
+            File(name, currentNode, typeOrSize.toInt())
         }
         currentNode.addChild(child)
     }
