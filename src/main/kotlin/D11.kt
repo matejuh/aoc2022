@@ -1,28 +1,53 @@
 import java.io.File
 import kotlin.math.floor
-import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 fun main() {
-    d11a()
+//    d11a()
+    d11b()
 }
 
 private val monkeys = mutableListOf<Monkey>()
 
 private fun d11a() {
+    File(ClassLoader.getSystemResource("D11test").path).useLines {
+        val iterator = it.iterator()
+        while (iterator.hasNext()) {
+            monkeys.add(readMonkey(iterator))
+        }
+    }
+    val commonMultiplier = monkeys.fold(1) { cur, monkey -> cur * monkey.divisibleBy } // all prime numbers
+    repeat(20) { round ->
+//        println("ROUND: $round")
+        monkeys.forEachIndexed { index, monkey ->
+//            println("Monkey no. $index")
+            monkey.inspectAll(3.0, commonMultiplier)
+        }
+    }
+    monkeys.forEachIndexed { index, monkey ->
+        println("Monkey no. $index inspected items ${monkey.inspectedItems} times")
+    }
+}
+
+private fun d11b() {
     File(ClassLoader.getSystemResource("D11").path).useLines {
         val iterator = it.iterator()
         while (iterator.hasNext()) {
             monkeys.add(readMonkey(iterator))
         }
     }
-    repeat(20) { round ->
+    val commonMultiplier = monkeys.fold(1) { cur, monkey -> cur * monkey.divisibleBy } // all prime numbers
+    println(commonMultiplier)
+    repeat(10000) { round ->
         println("ROUND: $round")
         monkeys.forEachIndexed { index, monkey ->
-//            println("Monkey no. $index")
-            monkey.inspectAll()
+            println("Monkey no. $index")
+            monkey.inspectAll(1.0, commonMultiplier)
         }
     }
-    println(monkeys)
+    monkeys.forEachIndexed { index, monkey ->
+        println("Monkey no. $index inspected items ${monkey.inspectedItems} times")
+    }
 }
 
 //Monkey 1:
@@ -33,29 +58,29 @@ private fun d11a() {
 //    If false: throw to monkey 0
 private fun readMonkey(iterator: Iterator<String>): Monkey {
     iterator.next()
-    val items = iterator.next().split(": ")[1].split(", ").map { it.toInt() }
+    val items = iterator.next().split(": ")[1].split(", ").map { it.toLong() }
     val operationInput = iterator.next().split(": ")[1].split(" = ")[1].split(" ")
     val mathOperation = operationInput[1]
     val param = operationInput[2]
-    val operation: (Int) -> Int = if (param == "old") {
+    val operation: (Long) -> Long = if (param == "old") {
         when (mathOperation) {
-            "+" -> { old: Int -> old + old }
-            "*" -> { old: Int -> old * old }
+            "+" -> { old: Long -> old + old }
+            "*" -> { old: Long -> old * old }
             else -> throw IllegalStateException("Unsupported operation: $mathOperation")
         }
     } else {
         val number = param.toInt()
         when (mathOperation) {
-            "+" -> { old: Int -> old + number }
-            "*" -> { old: Int -> old * number }
+            "+" -> { old: Long -> old + number }
+            "*" -> { old: Long -> old * number }
             else -> throw IllegalStateException("Unsupported operation: $mathOperation")
         }
     }
     val divisibleBy = iterator.next().substringAfterLast(" ").toInt()
     val trueMonkey = iterator.next().substringAfterLast(" ").toInt()
     val falseMonkey = iterator.next().substringAfterLast(" ").toInt()
-    val test = { level: Int ->
-        if (level % divisibleBy == 0) {
+    val test = { level: Long ->
+        if (level % divisibleBy == 0L) {
             trueMonkey
         } else {
             falseMonkey
@@ -64,23 +89,30 @@ private fun readMonkey(iterator: Iterator<String>): Monkey {
     if (iterator.hasNext()) {
         iterator.next()
     }
-    return Monkey(ArrayDeque(items), operation, test)
+    return Monkey(ArrayDeque(items), divisibleBy, operation, test)
 }
 
-private class Monkey(val items: ArrayDeque<Int>, val operation: (Int) -> Int, val test: (Int) -> Int) {
+private class Monkey(
+    val items: ArrayDeque<Long>,
+    val divisibleBy: Int,
+    val operation: (Long) -> Long,
+    val test: (Long) -> Int
+) {
     var inspectedItems = 0
     override fun toString(): String = "Monkey inspected items: $inspectedItems"
 
-    fun inspectAll() {
+    fun inspectAll(divider: Double, commonMultiplier: Int) {
         do {
             val item = items.removeFirstOrNull()
             if (item != null) {
+//                println(item)
                 val worryLevel = operation(item)
-//            println("Worry level: $worryLevel")
-                val currentWorryLevel = floor(worryLevel / 3.0).roundToInt()
-//            println("Current level: $currentWorryLevel")
+//                println("Worry level: $worryLevel")
+                val currentWorryLevel = floor(worryLevel / divider).roundToLong() % commonMultiplier
+//                println("Current level: $currentWorryLevel")
                 val nextMonkey = test(currentWorryLevel)
-//            println("Next monkey: $nextMonkey")
+//                println("Next monkey: $nextMonkey")
+//                println("$currentWorryLevel $nextMonkey")
                 monkeys[nextMonkey].addItem(currentWorryLevel)
                 inspectedItems++
             }
@@ -89,7 +121,7 @@ private class Monkey(val items: ArrayDeque<Int>, val operation: (Int) -> Int, va
         )
     }
 
-    fun addItem(item: Int) {
+    fun addItem(item: Long) {
         items.addLast(item)
     }
 }
