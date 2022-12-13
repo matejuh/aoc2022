@@ -2,7 +2,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.io.File
 
 fun main() {
-    d13a()
+//    d13a()
+    d13b()
 }
 
 private fun d13a() {
@@ -10,11 +11,11 @@ private fun d13a() {
     var counter = 0
     File(ClassLoader.getSystemResource("D13").path).useLines {
         val iterator = it.iterator()
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             counter++
             val l1 = readLine(iterator.next())
             val l2 = readLine(iterator.next())
-            if (rightOrder(l1, l2) == true) {
+            if (rightOrder(l1, l2) == 1) {
                 println("$counter right order")
                 sum += counter
             } else {
@@ -28,25 +29,36 @@ private fun d13a() {
     println(sum)
 }
 
+private fun d13b() {
+    val dividers = listOf(arrayListOf(arrayListOf(2)), arrayListOf(arrayListOf(6)))
+    val result = File(ClassLoader.getSystemResource("D13").path).readLines().filter { it.isNotEmpty() }
+        .map { readLine(it) }
+        .plus(dividers)
+        .sortedWith { left, right -> rightOrder(left, right) * -1 }
+        .foldIndexed(1) { idx, acc, curr -> if (curr in dividers) { acc * (idx + 1) } else { acc } }
+    println(result)
+
+}
+
 private fun readLine(line: String): Any = jacksonObjectMapper().readValue(line, Any::class.java)
 
 
-private fun rightOrder(left: Any, right: Any): Boolean? {
+private fun rightOrder(left: Any, right: Any): Int {
     if (left is Int && right is Int) {
         return if (left < right) {
-            true
+            1
         } else if (left > right) {
-            false
+            -1
         } else {
-            null
+            0
         }
     }
     if (left is ArrayList<*> && right is ArrayList<*>) {
-        var result: Boolean?
+        var result: Int
         var idx = 0
-        while(idx < left.size && idx < right.size) {
+        while (idx < left.size && idx < right.size) {
             result = rightOrder(left[idx], right[idx])
-            if (result == null) {
+            if (result == 0) {
                 idx++
             } else {
                 return result
@@ -54,8 +66,12 @@ private fun rightOrder(left: Any, right: Any): Boolean? {
         }
         return if (idx == left.size && idx == right.size) {
             // next item
-            null
-        } else idx >= left.size
+            0
+        } else if (idx >= left.size) {
+            1
+        } else {
+            -1
+        }
     }
     return if (left is Int) {
         rightOrder(arrayListOf(left), right)
