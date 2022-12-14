@@ -42,10 +42,7 @@ private fun d14a() {
         var y = 0
         var collission = false
         do {
-            if (underground.overflow(y)) {
-                println("Overflow: ${it - 1}")
-                flowingOut = true
-            } else if (underground.canMove(x, y + 1)) {
+            if (underground.canMove(x, y + 1)) {
                 y += 1
             } else if (underground.canMove(x - 1, y + 1)) {
                 y += 1
@@ -54,6 +51,10 @@ private fun d14a() {
                 y += 1
                 x += 1
             } else {
+                if (y == 0) {
+                    flowingOut = true
+                    println("Iterations: $it")
+                }
                 underground.add(x, y, SAND)
                 collission = true
             }
@@ -76,17 +77,19 @@ private class Underground {
         if (x > maxX) {
             maxX = x
         }
-        if (y > maxY) {
-            maxY = y
+        if (value == ROCK) {
+            if (y > maxY) {
+                maxY = y
+            }
         }
     }
 
     fun overflow(y: Int): Boolean = maxY != 0 && y > maxY
 
-    fun canMove(x: Int, y: Int): Boolean = !underground.containsKey(Pair(x, y))
+    fun canMove(x: Int, y: Int): Boolean = !underground.containsKey(Pair(x, y)) && y < (maxY + 2)
 
     fun print() {
-        for (y in 0..maxY) {
+        for (y in 0..maxY + 2) {
             for (x in minX..maxX) {
                 print(underground.getOrDefault(Pair(x, y), SPACE))
             }
